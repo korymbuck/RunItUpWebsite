@@ -1,0 +1,483 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+index.html
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="index.html">
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RunItUp - Social GPS Run Tracker</title>
+    <link rel="icon" href="assets/favicon.png" type="image/png" />
+    <style>
+      /* --- GLOBAL STYLES --- */
+      :root {
+        --bg-start: #1a233c; /* Deep Blue */
+        --bg-end: #2c3e50; /* Dark Slate Gray */
+        --primary: #ffc857; /* Soft Yellow */
+        --accent: #f39c12; /* Orange/Yellow Accent */
+        --text-primary: #eaecef; /* Off-white */
+        --text-secondary: #ced4da; /* Light Gray */
+        --danger: #dc3545; /* Red */
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Helvetica, Arial, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(
+          145deg,
+          var(--bg-start) 0%,
+          var(--bg-end) 100%
+        );
+        color: var(--text-primary);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow-x: hidden;
+      }
+
+      a {
+        color: var(--primary);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+
+      a:hover {
+        color: var(--accent);
+      }
+
+      /* --- UTILITY COMPONENTS (RunItUp Style) --- */
+
+      .glass-card {
+        background-color: rgba(
+          255,
+          255,
+          255,
+          0.05
+        ); /* Semi-transparent white */
+        border-radius: 24px; /* Consistent rounded corners */
+        border: 1px solid rgba(255, 255, 255, 0.18); /* Light border */
+        backdrop-filter: blur(10px); /* Glass effect */
+        -webkit-backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      }
+
+      .custom-button {
+        display: flex; /* CHANGED: Use flex for icon alignment */
+        justify-content: center; /* Center content horizontally */
+        align-items: center; /* Center content vertically */
+        background-color: var(--primary);
+        color: var(--bg-end); /* Text color is dark slate gray */
+        padding: 15px 30px;
+        border-radius: 25px;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        cursor: pointer;
+        transition: background-color 0.2s, transform 0.1s;
+        margin: 10px 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        width: 100%; /* Make buttons full width in their container */
+      }
+
+      .custom-button:hover {
+        background-color: var(--accent);
+        transform: translateY(-2px);
+      }
+
+      /* NEW: Style for the app store icons inside the button */
+      .store-icon {
+        width: 28px; /* Slightly larger size for better visibility */
+        height: 28px;
+        margin-right: 10px; /* Space between icon and text */
+        /* Ensure images scale correctly */
+        object-fit: contain;
+        background-color: transparent !important;
+      }
+
+      /* Secondary Button Style */
+      .custom-button.secondary {
+        background-color: var(--bg-end);
+        color: var(--primary);
+        border: 1px solid var(--primary);
+      }
+
+      /* Adjust icon color for the secondary button style */
+      .custom-button.secondary .store-icon {
+        background-color: var(--primary);
+      }
+
+      /* --- LAYOUT & MAIN SECTIONS --- */
+
+      .container {
+        width: 100%;
+        max-width: 1200px;
+        padding-top: 40px;
+      }
+
+      /* HEADER/HERO SECTION */
+      .hero {
+        text-align: center;
+        padding: 40px 20px;
+      }
+
+      .logo-img {
+        width: 160px;
+        height: 160px;
+        margin-bottom: 20px;
+        border-radius: 15px; /* Added rounded corners to logo */
+      }
+
+      .hero h1 {
+        font-size: 64px;
+        font-weight: 900;
+        color: var(--primary);
+        margin-bottom: 10px;
+        line-height: 1;
+        letter-spacing: -1px;
+      }
+
+      .hero p {
+        font-size: 24px;
+        color: var(--text-secondary);
+        margin-bottom: 40px;
+      }
+
+      .cta-buttons {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        width: 100%;
+        max-width: 340px;
+        margin: 0 auto;
+      }
+
+      /* --- NEW: UNIFIED FEATURE SHOWCASE --- */
+
+      .showcase-block {
+        padding: 60px 20px;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      .showcase-block h2 {
+        font-size: 44px;
+        text-align: center;
+        color: var(--primary);
+        margin-bottom: 60px;
+        font-weight: bold;
+      }
+
+      .feature-pair {
+        display: flex;
+        align-items: center;
+        gap: 50px;
+        width: 100%;
+        margin-bottom: 80px;
+        padding: 30px;
+        /* Using glass-card styling for the container to maintain cohesion */
+        background-color: rgba(255, 255, 255, 0.03);
+        border-radius: 30px;
+      }
+
+      .feature-pair.reverse {
+        flex-direction: row-reverse;
+      }
+
+      .feature-text {
+        flex: 1;
+        min-width: 300px;
+        padding: 20px 0;
+      }
+
+      .feature-text h3 {
+        font-size: 32px;
+        color: var(--primary);
+        margin-bottom: 15px;
+        font-weight: 800;
+        border-left: 4px solid var(--accent);
+        padding-left: 15px;
+        line-height: 1.2;
+      }
+
+      .feature-text p {
+        color: var(--text-secondary);
+        font-size: 18px;
+        line-height: 1.7;
+      }
+
+      .feature-image {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .feature-image img {
+        width: 100%;
+        max-width: 350px; /* Standard mobile width */
+        height: auto;
+        display: block;
+        border-radius: 24px;
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.6);
+        transition: transform 0.3s ease;
+        border: 8px solid var(--bg-start); /* Mock phone bezel */
+        cursor: zoom-in;
+      }
+
+      .feature-image img:hover {
+        transform: scale(1.02);
+      }
+
+      /* FOOTER */
+      .footer {
+        width: 100%;
+        padding: 20px;
+        text-align: center;
+        margin-top: 40px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .footer p {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-bottom: 10px;
+      }
+
+      .footer-links a {
+        margin: 0 10px;
+        font-size: 14px;
+      }
+
+      /* Media Queries for smaller screens */
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 50px;
+        }
+        .hero p {
+          font-size: 20px;
+        }
+        .feature-pair,
+        .feature-pair.reverse {
+          flex-direction: column;
+          text-align: center;
+          padding: 20px;
+        }
+        .feature-text {
+          order: 2; /* Put text below image on mobile */
+          text-align: left; /* Keep text readable */
+        }
+        .feature-image {
+          order: 1;
+          margin-bottom: 10px;
+        }
+        .feature-image img {
+          max-width: 280px;
+        }
+        .feature-text h3 {
+          margin-top: 10px;
+          border-left: none; /* Remove left border on mobile for centered text */
+          padding-left: 0;
+          text-align: center;
+        }
+        .feature-text p {
+          text-align: left;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="hero">
+        <img src="assets/favicon.png" alt="RunItUp Logo" class="logo-img" />
+        <h1>RunItUp</h1>
+        <p>Your social GPS run tracker—built for community and competition.</p>
+
+        <div class="cta-buttons">
+          <a
+            href="https://apps.apple.com/us/app/runitup/id6754661019"
+            target="_blank"
+            class="custom-button app-store-button">
+            <img
+              src="assets/AppStoreIcon.png"
+              alt="App Store Icon"
+              class="store-icon" />
+            Download on the App Store
+          </a>
+
+          <a
+            href="#"
+            class="custom-button secondary google-play-button coming-soon">
+            <img
+              src="assets/GooglePlay.png"
+              alt="Google Play Icon"
+              class="store-icon" />
+            Coming Soon to Google Play
+          </a>
+        </div>
+      </header>
+
+      <section class="showcase-block">
+        <h2>Features Designed for Runners, by Runners</h2>
+
+        <div class="feature-pair">
+          <div class="feature-text">
+            <h3>Precision GPS Tracking & Maps</h3>
+            <p>
+              Get accurate real-time tracking and precise map visualizations.
+              See your route, pace, and distance as you run.
+            </p>
+          </div>
+          <div class="feature-image">
+            <img
+              src="assets/gps_tracking_screenshot.png"
+              alt="Screenshot 1 - Live Tracking Screen"
+              onerror="this.onerror=null;this.src='https://placehold.co/350x650/1a233c/ffc857?text=Live+Tracking';" />
+          </div>
+        </div>
+
+        <div class="feature-pair reverse">
+          <div class="feature-text">
+            <h3>Engaging Social Feed & Community</h3>
+            <p>
+              Share your runs directly to your feed, complete with a map,
+              captions, and run stats. See your friends' latest activity and
+              interact with likes and comments.
+            </p>
+          </div>
+          <div class="feature-image">
+            <img
+              src="assets/social_feed_screenshot.png"
+              alt="Screenshot 2 - Social Feed Screen"
+              onerror="this.onerror=null;this.src='https://placehold.co/350x650/1a233c/ffc857?text=Social+Feed';" />
+          </div>
+        </div>
+
+        <div class="feature-pair">
+          <div class="feature-text">
+            <h3>Run Clubs & Weekly Leaderboards</h3>
+            <p>
+              Create or join a run club with your friends, colleagues, or
+              training partners. Compete weekly for bragging rights on the club
+              leaderboard!
+            </p>
+          </div>
+          <div class="feature-image">
+            <img
+              src="assets/run_club_screenshot.png"
+              alt="Screenshot 3 - Club Leaderboard Screen"
+              onerror="this.onerror=null;this.src='https://placehold.co/350x650/1a233c/ffc857?text=Leaderboard';" />
+          </div>
+        </div>
+
+        <div class="feature-pair reverse">
+          <div class="feature-text">
+            <h3>Shoe Tracker & Personal Records</h3>
+            <p>
+              Log your running shoes and track their mileage to know when it's
+              time for a replacement. Your profile also auto-calculates and
+              proudly displays all-time stats and Personal Records (PRs) like
+              your fastest 5k and 10k.
+            </p>
+          </div>
+          <div class="feature-image">
+            <img
+              src="assets/profile_screenshot.png"
+              alt="Screenshot 4 - User Profile with Stats"
+              onerror="this.onerror=null;this.src='https://placehold.co/350x650/1a233c/ffc857?text=Profile+Stats';" />
+          </div>
+        </div>
+      </section>
+
+      <section class="hero">
+        <h2 style="font-size: 38px; color: var(--text-primary)">
+          Go Further, Together. RunItUp.
+        </h2>
+        <div class="cta-buttons">
+          <a
+            href="https://apps.apple.com/us/app/runitup/id6754661019"
+            target="_blank"
+            class="custom-button app-store-button">
+            <img
+              src="assets/AppStoreIcon.png"
+              alt="App Store Icon"
+              class="store-icon" />
+            Download Now and Join the Community
+          </a>
+        </div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <p>&copy; 2025 RunItUp. All rights reserved.</p>
+      <div class="footer-links">
+        <a
+          href="https://korymbuck.github.io/runitup-privacy-policy/privacy_policy.html"
+          target="_blank"
+          >Privacy Policy</a
+        >
+        <a
+          href="https://korymbuck.github.io/runitup-privacy-policy/terms_of_use.html"
+          target="_blank"
+          >Terms of Use</a
+        >
+      </div>
+    </footer>
+  </body>
+</html>
+</file>
+
+</files>
