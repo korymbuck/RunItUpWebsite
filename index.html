@@ -5,203 +5,218 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RunItUp - Social GPS Run Tracker</title>
     <link rel="icon" href="assets/favicon.png" type="image/png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap"
+      rel="stylesheet" />
+
     <style>
-      /* --- GLOBAL STYLES --- */
+      /* --- GLOBAL VARIABLES --- */
       :root {
         --bg-start: #1a233c; /* Deep Blue */
         --bg-end: #2c3e50; /* Dark Slate Gray */
         --primary: #ffc857; /* Soft Yellow */
         --accent: #f39c12; /* Orange/Yellow Accent */
-        --text-primary: #eaecef; /* Off-white */
-        --text-secondary: #ced4da; /* Light Gray */
-        --danger: #dc3545; /* Red */
+        --text-primary: #ffffff;
+        --text-secondary: #cbd5e1;
+        --glass-border: rgba(255, 255, 255, 0.08);
+        --glass-bg: rgba(255, 255, 255, 0.03);
       }
 
+      /* --- RESET & BASE STYLES --- */
       * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
-        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
-          Roboto, Helvetica, Arial, sans-serif;
+      }
+
+      html {
+        scroll-behavior: smooth;
       }
 
       body {
+        font-family: "Inter", sans-serif;
         background: linear-gradient(
-          145deg,
+          160deg,
           var(--bg-start) 0%,
           var(--bg-end) 100%
         );
         color: var(--text-primary);
         min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
         overflow-x: hidden;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased; /* Crisp text on Mac/iOS */
+      }
+
+      /* --- AMBIENT GLOW EFFECT --- */
+      /* Adds a subtle spotlight behind the hero to add depth */
+      body::before {
+        content: "";
+        position: absolute;
+        top: -10%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(
+          circle,
+          rgba(255, 200, 87, 0.15) 0%,
+          rgba(0, 0, 0, 0) 70%
+        );
+        z-index: -1;
+        pointer-events: none;
       }
 
       a {
-        color: var(--primary);
         text-decoration: none;
-        transition: color 0.2s;
+        color: inherit;
+        transition: opacity 0.2s ease;
       }
 
-      a:hover {
-        color: var(--accent);
+      /* --- UTILITY CLASSES --- */
+      .container {
+        width: 100%;
+        max-width: 1100px; /* Slightly tighter for better readability */
+        margin: 0 auto;
+        padding: 0 24px;
       }
 
-      /* --- UTILITY COMPONENTS (RunItUp Style) --- */
-
-      .glass-card {
-        background-color: rgba(
-          255,
-          255,
-          255,
-          0.05
-        ); /* Semi-transparent white */
-        border-radius: 24px; /* Consistent rounded corners */
-        border: 1px solid rgba(255, 255, 255, 0.18); /* Light border */
-        backdrop-filter: blur(10px); /* Glass effect */
-        -webkit-backdrop-filter: blur(10px);
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-      }
-
+      /* --- BUTTONS --- */
       .custom-button {
-        display: flex; /* CHANGED: Use flex for icon alignment */
-        justify-content: center; /* Center content horizontally */
-        align-items: center; /* Center content vertically */
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
         background-color: var(--primary);
-        color: var(--bg-end); /* Text color is dark slate gray */
-        padding: 15px 30px;
-        border-radius: 25px;
-        font-size: 18px;
-        font-weight: bold;
-        text-align: center;
+        color: var(--bg-start);
+        padding: 16px 32px;
+        border-radius: 50px; /* Pill shape */
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
         cursor: pointer;
-        transition: background-color 0.2s, transform 0.1s;
-        margin: 10px 0;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        width: 100%; /* Make buttons full width in their container */
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        width: 100%;
+        max-width: 360px;
+        box-shadow: 0 4px 20px rgba(255, 200, 87, 0.2); /* Glow matching brand color */
+        border: 2px solid transparent;
       }
 
       .custom-button:hover {
-        background-color: var(--accent);
-        transform: translateY(-2px);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(255, 200, 87, 0.4);
+        background-color: #ffd175; /* Slightly lighter on hover */
       }
 
-      /* NEW: Style for the app store icons inside the button */
-      .store-icon {
-        width: 28px; /* Slightly larger size for better visibility */
-        height: 28px;
-        margin-right: 10px; /* Space between icon and text */
-        /* Ensure images scale correctly */
-        object-fit: contain;
-        background-color: transparent !important;
-      }
-
-      /* Secondary Button Style */
       .custom-button.secondary {
-        background-color: var(--bg-end);
+        background-color: transparent;
         color: var(--primary);
-        border: 1px solid var(--primary);
+        border: 2px solid rgba(255, 200, 87, 0.3);
+        box-shadow: none;
       }
 
-      /* Adjust icon color for the secondary button style */
-      .custom-button.secondary .store-icon {
-        background-color: var(--primary);
+      .custom-button.secondary:hover {
+        border-color: var(--primary);
+        background-color: rgba(255, 200, 87, 0.05);
       }
 
-      /* Google Play Coming Soon Style (INACTIVE) */
       .custom-button.coming-soon {
-        opacity: 0.7; /* Visually dim it */
-        pointer-events: none; /* Make it unclickable */
-        cursor: default; /* Change cursor back to default */
+        opacity: 0.6;
+        cursor: not-allowed;
+        filter: grayscale(1); /* Makes it look truly inactive */
+      }
+      .custom-button.coming-soon:hover {
+        transform: none;
+        box-shadow: none;
+        border-color: rgba(255, 200, 87, 0.3);
       }
 
-      /* --- LAYOUT & MAIN SECTIONS --- */
-
-      .container {
-        width: 100%;
-        max-width: 1200px;
-        padding-top: 40px;
+      .store-icon {
+        width: 24px;
+        height: 24px;
+        margin-right: 12px;
+        object-fit: contain;
       }
 
-      /* HEADER/HERO SECTION */
+      /* --- HERO SECTION --- */
       .hero {
         text-align: center;
-        padding: 40px 20px;
+        padding: 80px 0 60px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        /* Animation on load */
+        animation: fadeUp 0.8s ease-out forwards;
       }
 
       .logo-img {
-        width: 160px;
-        height: 160px;
-        margin-bottom: 20px;
-        border-radius: 15px; /* Added rounded corners to logo */
+        width: 140px;
+        height: 140px;
+        margin-bottom: 32px;
+        border-radius: 28px; /* Smooth aesthetic corners */
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
       }
 
       .hero h1 {
-        font-size: 64px;
+        font-size: 56px;
         font-weight: 900;
-        color: var(--primary);
-        margin-bottom: 10px;
-        line-height: 1;
-        letter-spacing: -1px;
+        color: var(--text-primary);
+        margin-bottom: 16px;
+        line-height: 1.1;
+        letter-spacing: -0.03em;
+        /* Gradient text effect using brand colors */
+        background: linear-gradient(135deg, #ffffff 0%, var(--primary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
 
       .hero p {
-        font-size: 24px;
+        font-size: 20px;
         color: var(--text-secondary);
-        margin-bottom: 40px;
+        margin-bottom: 48px;
+        max-width: 600px;
+        font-weight: 400;
       }
 
       .cta-buttons {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 15px;
+        gap: 16px;
         width: 100%;
-        max-width: 340px;
-        margin: 0 auto;
       }
 
-      /* --- NEW: UNIFIED FEATURE SHOWCASE --- */
-
+      /* --- FEATURES SECTION --- */
       .showcase-block {
-        padding: 60px 20px;
-        max-width: 1000px;
-        margin: 0 auto;
+        padding: 40px 0 100px;
       }
 
-      .showcase-block h2 {
-        font-size: 44px;
+      .section-title {
+        font-size: 36px;
         text-align: center;
-        color: var(--primary);
-        margin-bottom: 60px;
-        font-weight: bold;
+        color: var(--text-primary);
+        margin-bottom: 80px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
       }
 
-      /* START: Visual Polish for Feature Pair (Stronger Glass Effect) */
+      /* Refined Feature Card */
       .feature-pair {
         display: flex;
         align-items: center;
-        gap: 50px;
-        width: 100%;
-        margin-bottom: 80px;
-        padding: 30px;
+        justify-content: space-between;
+        gap: 60px;
+        margin-bottom: 100px;
 
-        /* UPDATED: Applied stronger, explicit glass-card styling */
-        background-color: rgba(255, 255, 255, 0.08); /* More opaque glass */
-        border-radius: 30px;
-        border: 1px solid rgba(255, 255, 255, 0.15); /* Slightly darker border */
-        backdrop-filter: blur(12px);
-        box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4); /* Stronger overall shadow */
-        transition: all 0.3s ease; /* Added transition for hover effect */
+        /* Removed the heavy card background for a cleaner "floating" look.
+           If you prefer the card look, uncomment the background lines below. */
+        /* background: var(--glass-bg); */
+        /* border: 1px solid var(--glass-border); */
+        border-radius: 32px;
+        padding: 20px;
       }
-
-      .feature-pair:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 50px 0 rgba(0, 0, 0, 0.5); /* Lifted shadow on hover */
-      }
-      /* END: Visual Polish for Feature Pair */
 
       .feature-pair.reverse {
         flex-direction: row-reverse;
@@ -209,108 +224,135 @@
 
       .feature-text {
         flex: 1;
-        min-width: 300px;
-        padding: 20px 0;
+        max-width: 450px;
       }
 
       .feature-text h3 {
-        font-size: 32px;
+        font-size: 28px;
         color: var(--primary);
-        margin-bottom: 15px;
-        font-weight: 800;
-        border-left: 4px solid var(--accent);
-        padding-left: 15px;
-        line-height: 1.2;
+        margin-bottom: 16px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
       }
 
       .feature-text p {
         color: var(--text-secondary);
-        font-size: 18px;
-        line-height: 1.7;
+        font-size: 17px;
+        line-height: 1.6;
       }
 
+      /* --- PHONE MOCKUP STYLING --- */
       .feature-image {
         flex: 1;
         display: flex;
         justify-content: center;
-        align-items: center;
+        position: relative;
       }
 
-      /* START: Visual Polish for Screenshot Box Shadow */
+      /* Creates a glowing backdrop behind the phone */
+      .feature-image::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        height: 80%;
+        background: var(--primary);
+        opacity: 0.15;
+        filter: blur(60px);
+        border-radius: 50%;
+        z-index: -1;
+      }
+
       .feature-image img {
         width: 100%;
-        max-width: 350px; /* Standard mobile width */
+        max-width: 320px;
         height: auto;
         display: block;
-        border-radius: 24px;
-        transition: transform 0.3s ease;
-        border: 8px solid var(--bg-start); /* Mock phone bezel */
-
-        /* UPDATED: Polished box-shadow for premium screen effect */
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7),
-          /* Deep lift shadow */ inset 0 0 0 8px var(--bg-start); /* Inner bezel shadow for depth */
-
-        cursor: zoom-in;
-      }
-      /* END: Visual Polish for Screenshot Box Shadow */
-
-      .feature-image img:hover {
-        transform: scale(1.02);
+        /* Modern Phone Bezel Styling */
+        border-radius: 40px;
+        border: 6px solid #1a233c; /* Matches bg-start for bezel */
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1),
+          /* Outer thin rim */ 0 25px 50px -12px rgba(0, 0, 0, 0.6); /* Deep shadow */
+        transition: transform 0.4s ease;
       }
 
-      /* FOOTER */
+      .feature-pair:hover .feature-image img {
+        transform: scale(1.02) translateY(-10px);
+      }
+
+      /* --- FOOTER --- */
       .footer {
-        width: 100%;
-        padding: 20px;
+        padding: 60px 0;
         text-align: center;
-        margin-top: 40px;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-top: 1px solid var(--glass-border);
+        background: rgba(0, 0, 0, 0.1);
       }
 
       .footer p {
         font-size: 14px;
         color: var(--text-secondary);
-        margin-bottom: 10px;
+        margin-bottom: 20px;
+      }
+
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
       }
 
       .footer-links a {
-        margin: 0 10px;
         font-size: 14px;
+        color: var(--text-secondary);
+        font-weight: 500;
       }
 
-      /* Media Queries for smaller screens */
-      @media (max-width: 768px) {
+      .footer-links a:hover {
+        color: var(--primary);
+      }
+
+      /* --- ANIMATIONS --- */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* --- RESPONSIVE --- */
+      @media (max-width: 850px) {
         .hero h1 {
-          font-size: 50px;
+          font-size: 42px;
         }
         .hero p {
-          font-size: 20px;
+          font-size: 18px;
+          padding: 0 20px;
         }
+
         .feature-pair,
         .feature-pair.reverse {
           flex-direction: column;
+          gap: 40px;
           text-align: center;
-          padding: 20px;
+          margin-bottom: 80px;
         }
-        .feature-text {
-          order: 2; /* Put text below image on mobile */
-          text-align: left; /* Keep text readable */
+
+        .feature-text h3 {
+          font-size: 24px;
         }
-        .feature-image {
-          order: 1;
-          margin-bottom: 10px;
-        }
+
         .feature-image img {
           max-width: 280px;
         }
-        .feature-text h3 {
-          margin-top: 10px;
-          border-left: none; /* Remove left border on mobile for centered text */
-          padding-left: 0;
-          text-align: center;
-        }
-        .feature-text p {
-          text-align: left;
+
+        /* Disable hover effects on mobile to prevent sticky states */
+        .feature-pair:hover .feature-image img {
+          transform: none;
         }
       }
     </style>
@@ -320,13 +362,16 @@
       <header class="hero">
         <img src="assets/favicon.png" alt="RunItUp Logo" class="logo-img" />
         <h1>RunItUp</h1>
-        <p>Your social GPS run tracker—built for community and competition.</p>
+        <p>
+          Your social GPS run tracker—built for community, competition, and
+          pushing your limits.
+        </p>
 
         <div class="cta-buttons">
           <a
             href="https://apps.apple.com/us/app/runitup/id6754661019"
             target="_blank"
-            class="custom-button app-store-button">
+            class="custom-button">
             <img
               src="assets/AppStoreIcon.png"
               alt="App Store Icon"
@@ -334,9 +379,7 @@
             Download on the App Store
           </a>
 
-          <a
-            href="#"
-            class="custom-button secondary google-play-button coming-soon">
+          <a href="#" class="custom-button secondary coming-soon">
             <img
               src="assets/GooglePlay.png"
               alt="Google Play Icon"
@@ -347,98 +390,98 @@
       </header>
 
       <section class="showcase-block">
-        <h2>Features Designed for Runners, by Runners</h2>
+        <h2 class="section-title">Designed for Runners, by Runners</h2>
 
         <div class="feature-pair">
           <div class="feature-text">
-            <h3>Precision GPS Tracking & Maps</h3>
+            <h3>Precision GPS Tracking</h3>
             <p>
-              Get accurate real-time tracking and precise map visualizations.
-              See your route, pace, and distance as you run.
+              Experience accurate real-time tracking with crisp map
+              visualizations. Monitor your route, live pace, and total distance
+              seamlessly as you run.
             </p>
           </div>
           <div class="feature-image">
             <img
               src="assets/gps_tracking_screenshot.png"
-              alt="Screenshot 1 - Live Tracking Screen"
-              onerror="this.onerror=null;this.src='https://placehold.co/350x650/1a233c/ffc857?text=Live+Tracking';" />
+              alt="App Screenshot: Live Tracking"
+              onerror="this.onerror=null;this.src='https://placehold.co/350x650/1a233c/ffc857?text=GPS+Tracking';" />
           </div>
         </div>
 
         <div class="feature-pair reverse">
           <div class="feature-text">
-            <h3>Engaging Social Feed & Community</h3>
+            <h3>Social Feed & Community</h3>
             <p>
-              Share your runs directly to your feed, complete with a map,
-              captions, and run stats. See your friends' latest activity and
-              interact with likes and comments.
+              Share your victories. Post runs directly to your feed complete
+              with maps, stats, and photos. Cheer on your friends with likes and
+              comments.
             </p>
           </div>
           <div class="feature-image">
             <img
               src="assets/social_feed_screenshot.png"
-              alt="Screenshot 2 - Social Feed Screen"
+              alt="App Screenshot: Social Feed"
               onerror="this.onerror=null;this.src='https://placehold.co/350x650/1a233c/ffc857?text=Social+Feed';" />
           </div>
         </div>
 
         <div class="feature-pair">
           <div class="feature-text">
-            <h3>Run Clubs & Weekly Leaderboards</h3>
+            <h3>Clubs & Leaderboards</h3>
             <p>
-              Create or join a run club with your friends, colleagues, or
-              training partners. Compete weekly for bragging rights on the club
-              leaderboard!
+              Find your tribe. Create or join run clubs with friends and
+              colleagues. Battle for the top spot on weekly leaderboards and
+              earn bragging rights.
             </p>
           </div>
           <div class="feature-image">
             <img
               src="assets/run_club_screenshot.png"
-              alt="Screenshot 3 - Club Leaderboard Screen"
-              onerror="this.onerror=null;this.src='https://placehold.co/350x650/1a233c/ffc857?text=Leaderboard';" />
+              alt="App Screenshot: Leaderboards"
+              onerror="this.onerror=null;this.src='https://placehold.co/350x650/1a233c/ffc857?text=Leaderboards';" />
           </div>
         </div>
 
         <div class="feature-pair reverse">
           <div class="feature-text">
-            <h3>Shoe Tracker & Personal Records</h3>
+            <h3>Shoe Tracking & PRs</h3>
             <p>
-              Log your running shoes and track their mileage to know when it's
-              time for a replacement. Your profile also auto-calculates and
-              proudly displays all-time stats and Personal Records (PRs) like
-              your fastest 5k and 10k.
+              Never run on worn-out soles. Track mileage on your gear and get
+              alerts when it's time to switch. Plus, view your calculated
+              Personal Records for 5k, 10k, and more.
             </p>
           </div>
           <div class="feature-image">
             <img
               src="assets/profile_screenshot.png"
-              alt="Screenshot 4 - User Profile with Stats"
+              alt="App Screenshot: Profile Stats"
               onerror="this.onerror=null;this.src='https://placehold.co/350x650/1a233c/ffc857?text=Profile+Stats';" />
           </div>
         </div>
       </section>
 
-      <section class="hero">
-        <h2 style="font-size: 38px; color: var(--text-primary)">
-          Go Further, Together. RunItUp.
+      <section class="hero" style="padding-top: 0">
+        <h2
+          style="
+            font-size: 32px;
+            color: var(--text-primary);
+            margin-bottom: 30px;
+          ">
+          Go Further, Together.
         </h2>
         <div class="cta-buttons">
           <a
             href="https://apps.apple.com/us/app/runitup/id6754661019"
             target="_blank"
-            class="custom-button app-store-button">
-            <img
-              src="assets/AppStoreIcon.png"
-              alt="App Store Icon"
-              class="store-icon" />
-            Download Now and Join the Community
+            class="custom-button">
+            Download Now
           </a>
         </div>
       </section>
     </div>
 
     <footer class="footer">
-      <p>&copy; 2025 RunItUp. All rights reserved.</p>
       <div class="footer-links">
         <a
           href="https://korymbuck.github.io/runitup-privacy-policy/privacy_policy.html"
@@ -451,6 +494,9 @@
           >Terms of Use</a
         >
       </div>
+      <p style="margin-top: 20px; opacity: 0.5">
+        &copy; 2025 RunItUp. All rights reserved.
+      </p>
     </footer>
   </body>
 </html>
