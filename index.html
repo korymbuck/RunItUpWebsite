@@ -13,25 +13,25 @@
       rel="stylesheet" />
 
     <style>
-      /* --- GLOBAL VARIABLES --- */
+      /* --- VARIABLES --- */
       :root {
-        --bg-start: #1a233c; /* Deep Blue */
-        --bg-end: #2c3e50; /* Dark Slate Gray */
-        --primary: #ffc857; /* Soft Yellow */
-        --accent: #f39c12; /* Orange/Yellow Accent */
+        --bg-start: #1a233c;
+        --bg-end: #2c3e50;
+        --primary: #ffc857;
+        --accent: #f39c12;
         --text-primary: #ffffff;
         --text-secondary: #cbd5e1;
         --glass-border: rgba(255, 255, 255, 0.08);
         --glass-bg: rgba(255, 255, 255, 0.03);
+        --nav-height: 70px;
       }
 
-      /* --- RESET & BASE STYLES --- */
+      /* --- RESET --- */
       * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
       }
-
       html {
         scroll-behavior: smooth;
       }
@@ -47,96 +47,142 @@
         min-height: 100vh;
         overflow-x: hidden;
         line-height: 1.6;
-        -webkit-font-smoothing: antialiased; /* Crisp text on Mac/iOS */
+        -webkit-font-smoothing: antialiased;
+        padding-top: var(--nav-height); /* Prevent content hiding behind nav */
       }
 
-      /* --- AMBIENT GLOW EFFECT --- */
-      /* Adds a subtle spotlight behind the hero to add depth */
-      body::before {
-        content: "";
-        position: absolute;
-        top: -10%;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 600px;
-        height: 600px;
-        background: radial-gradient(
-          circle,
-          rgba(255, 200, 87, 0.15) 0%,
-          rgba(0, 0, 0, 0) 70%
-        );
+      /* --- ANIMATED BACKGROUND ORBS --- */
+      .ambient-light {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
         z-index: -1;
         pointer-events: none;
       }
 
-      a {
-        text-decoration: none;
-        color: inherit;
-        transition: opacity 0.2s ease;
+      .orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.4;
+        animation: float 20s infinite ease-in-out;
       }
 
-      /* --- UTILITY CLASSES --- */
+      .orb-1 {
+        top: -10%;
+        left: -10%;
+        width: 50vw;
+        height: 50vw;
+        background: radial-gradient(
+          circle,
+          rgba(255, 200, 87, 0.2) 0%,
+          rgba(0, 0, 0, 0) 70%
+        );
+      }
+
+      .orb-2 {
+        bottom: -20%;
+        right: -10%;
+        width: 60vw;
+        height: 60vw;
+        background: radial-gradient(
+          circle,
+          rgba(29, 78, 216, 0.15) 0%,
+          rgba(0, 0, 0, 0) 70%
+        ); /* Subtle blue contrast */
+        animation-delay: -5s;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translate(0, 0);
+        }
+        50% {
+          transform: translate(30px, 50px);
+        }
+        100% {
+          transform: translate(0, 0);
+        }
+      }
+
+      /* --- NAVBAR --- */
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: var(--nav-height);
+        background: rgba(26, 35, 60, 0.7); /* Translucent dark */
+        backdrop-filter: blur(12px); /* Glass effect */
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--glass-border);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .nav-content {
+        width: 100%;
+        max-width: 1100px;
+        padding: 0 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .nav-logo {
+        font-weight: 900;
+        font-size: 20px;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none; /* No underline */
+      }
+
+      .nav-logo img {
+        height: 32px;
+        width: 32px;
+        border-radius: 6px;
+      }
+
+      .nav-cta {
+        padding: 10px 20px;
+        background: var(--primary);
+        color: var(--bg-start);
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 14px;
+        transition: transform 0.2s;
+        text-decoration: none; /* Explicitly remove underline */
+      }
+
+      .nav-cta:hover {
+        transform: translateY(-2px);
+      }
+
+      /* --- UTILITY --- */
       .container {
         width: 100%;
-        max-width: 1100px; /* Slightly tighter for better readability */
+        max-width: 1100px;
         margin: 0 auto;
         padding: 0 24px;
       }
 
-      /* --- BUTTONS --- */
-      .custom-button {
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        background-color: var(--primary);
-        color: var(--bg-start);
-        padding: 16px 32px;
-        border-radius: 50px; /* Pill shape */
-        font-size: 16px;
-        font-weight: 700;
-        letter-spacing: -0.02em;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        width: 100%;
-        max-width: 360px;
-        box-shadow: 0 4px 20px rgba(255, 200, 87, 0.2); /* Glow matching brand color */
-        border: 2px solid transparent;
+      /* --- SCROLL ANIMATION CLASS --- */
+      .reveal {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
       }
 
-      .custom-button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(255, 200, 87, 0.4);
-        background-color: #ffd175; /* Slightly lighter on hover */
-      }
-
-      .custom-button.secondary {
-        background-color: transparent;
-        color: var(--primary);
-        border: 2px solid rgba(255, 200, 87, 0.3);
-        box-shadow: none;
-      }
-
-      .custom-button.secondary:hover {
-        border-color: var(--primary);
-        background-color: rgba(255, 200, 87, 0.05);
-      }
-
-      .custom-button.coming-soon {
-        opacity: 0.6;
-        cursor: not-allowed;
-        filter: grayscale(1); /* Makes it look truly inactive */
-      }
-      .custom-button.coming-soon:hover {
-        transform: none;
-        box-shadow: none;
-        border-color: rgba(255, 200, 87, 0.3);
-      }
-
-      .store-icon {
-        width: 24px;
-        height: 24px;
-        margin-right: 12px;
-        object-fit: contain;
+      .reveal.active {
+        opacity: 1;
+        transform: translateY(0);
       }
 
       /* --- HERO SECTION --- */
@@ -146,30 +192,35 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        /* Animation on load */
-        animation: fadeUp 0.8s ease-out forwards;
       }
 
-      .logo-img {
+      .logo-main {
         width: 140px;
         height: 140px;
         margin-bottom: 32px;
-        border-radius: 28px; /* Smooth aesthetic corners */
+        border-radius: 28px;
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s;
+      }
+
+      .logo-main:hover {
+        transform: scale(1.05) rotate(2deg);
       }
 
       .hero h1 {
-        font-size: 56px;
+        font-size: 64px;
         font-weight: 900;
-        color: var(--text-primary);
         margin-bottom: 16px;
         line-height: 1.1;
         letter-spacing: -0.03em;
-        /* Gradient text effect using brand colors */
         background: linear-gradient(135deg, #ffffff 0%, var(--primary) 100%);
+
+        /* The Fix: Include both the vendor prefix and the standard property */
         -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
         background-clip: text;
+
+        -webkit-text-fill-color: transparent;
+        /* Note: text-fill-color is not yet standard, so we only use the -webkit version */
       }
 
       .hero p {
@@ -177,7 +228,6 @@
         color: var(--text-secondary);
         margin-bottom: 48px;
         max-width: 600px;
-        font-weight: 400;
       }
 
       .cta-buttons {
@@ -188,36 +238,103 @@
         width: 100%;
       }
 
-      /* --- FEATURES SECTION --- */
-      .showcase-block {
-        padding: 40px 0 100px;
+      .custom-button {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--primary);
+        color: var(--bg-start);
+        padding: 16px 32px;
+        border-radius: 50px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        width: 100%;
+        max-width: 360px;
+        box-shadow: 0 4px 20px rgba(255, 200, 87, 0.2);
+        border: 2px solid transparent;
+        text-decoration: none; /* Explicitly remove underline */
       }
 
+      .custom-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(255, 200, 87, 0.4);
+        background-color: #ffd175;
+      }
+
+      .custom-button.secondary {
+        background-color: transparent;
+        color: var(--primary);
+        border: 2px solid rgba(255, 200, 87, 0.3);
+        box-shadow: none;
+      }
+
+      .custom-button.coming-soon {
+        opacity: 0.6;
+        cursor: default;
+        filter: grayscale(1);
+      }
+      .custom-button.coming-soon:hover {
+        transform: none;
+        box-shadow: none;
+      }
+
+      .store-icon {
+        width: 24px;
+        height: 24px;
+        margin-right: 12px;
+        object-fit: contain;
+      }
+
+      /* --- STATS BAR (Social Proof) --- */
+      .stats-bar {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin: 60px 0;
+        padding: 30px;
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 20px;
+        border: 1px solid var(--glass-border);
+      }
+
+      .stat-item {
+        text-align: center;
+      }
+      .stat-number {
+        display: block;
+        font-size: 32px;
+        font-weight: 800;
+        color: var(--primary);
+      }
+      .stat-label {
+        font-size: 14px;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      /* --- FEATURES --- */
+      .showcase-block {
+        padding: 60px 0 100px;
+      }
       .section-title {
         font-size: 36px;
         text-align: center;
-        color: var(--text-primary);
         margin-bottom: 80px;
         font-weight: 800;
         letter-spacing: -0.02em;
       }
 
-      /* Refined Feature Card */
       .feature-pair {
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 60px;
-        margin-bottom: 100px;
-
-        /* Removed the heavy card background for a cleaner "floating" look.
-           If you prefer the card look, uncomment the background lines below. */
-        /* background: var(--glass-bg); */
-        /* border: 1px solid var(--glass-border); */
-        border-radius: 32px;
-        padding: 20px;
+        margin-bottom: 120px;
       }
-
       .feature-pair.reverse {
         flex-direction: row-reverse;
       }
@@ -226,22 +343,18 @@
         flex: 1;
         max-width: 450px;
       }
-
       .feature-text h3 {
-        font-size: 28px;
+        font-size: 30px;
         color: var(--primary);
         margin-bottom: 16px;
         font-weight: 700;
-        letter-spacing: -0.01em;
       }
-
       .feature-text p {
+        font-size: 18px;
         color: var(--text-secondary);
-        font-size: 17px;
         line-height: 1.6;
       }
 
-      /* --- PHONE MOCKUP STYLING --- */
       .feature-image {
         flex: 1;
         display: flex;
@@ -249,37 +362,37 @@
         position: relative;
       }
 
-      /* Creates a glowing backdrop behind the phone */
+      /* Glowing effect behind phone */
       .feature-image::after {
         content: "";
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 80%;
-        height: 80%;
+        width: 70%;
+        height: 70%;
         background: var(--primary);
-        opacity: 0.15;
-        filter: blur(60px);
+        opacity: 0.1;
+        filter: blur(50px);
         border-radius: 50%;
         z-index: -1;
       }
 
       .feature-image img {
         width: 100%;
-        max-width: 320px;
-        height: auto;
-        display: block;
-        /* Modern Phone Bezel Styling */
+        max-width: 300px;
         border-radius: 40px;
-        border: 6px solid #1a233c; /* Matches bg-start for bezel */
+        border: 6px solid #1a233c;
         box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1),
-          /* Outer thin rim */ 0 25px 50px -12px rgba(0, 0, 0, 0.6); /* Deep shadow */
+          0 25px 50px -12px rgba(0, 0, 0, 0.6);
         transition: transform 0.4s ease;
       }
 
       .feature-pair:hover .feature-image img {
-        transform: scale(1.02) translateY(-10px);
+        transform: scale(1.02) rotate(-1deg);
+      }
+      .feature-pair.reverse:hover .feature-image img {
+        transform: scale(1.02) rotate(1deg);
       }
 
       /* --- FOOTER --- */
@@ -287,80 +400,72 @@
         padding: 60px 0;
         text-align: center;
         border-top: 1px solid var(--glass-border);
-        background: rgba(0, 0, 0, 0.1);
+        background: rgba(0, 0, 0, 0.2);
       }
-
-      .footer p {
-        font-size: 14px;
-        color: var(--text-secondary);
-        margin-bottom: 20px;
-      }
-
       .footer-links {
         display: flex;
         justify-content: center;
-        gap: 24px;
+        gap: 30px;
+        margin-bottom: 20px;
       }
-
       .footer-links a {
-        font-size: 14px;
         color: var(--text-secondary);
-        font-weight: 500;
+        font-size: 14px;
+        transition: color 0.2s;
+        text-decoration: none; /* No underline in footer links either */
       }
-
       .footer-links a:hover {
         color: var(--primary);
       }
 
-      /* --- ANIMATIONS --- */
-      @keyframes fadeUp {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      /* --- RESPONSIVE --- */
+      /* --- MOBILE --- */
       @media (max-width: 850px) {
         .hero h1 {
-          font-size: 42px;
+          font-size: 48px;
         }
-        .hero p {
-          font-size: 18px;
-          padding: 0 20px;
-        }
-
         .feature-pair,
         .feature-pair.reverse {
           flex-direction: column;
-          gap: 40px;
           text-align: center;
+          gap: 40px;
           margin-bottom: 80px;
         }
-
-        .feature-text h3 {
-          font-size: 24px;
-        }
-
         .feature-image img {
-          max-width: 280px;
+          max-width: 260px;
         }
-
-        /* Disable hover effects on mobile to prevent sticky states */
-        .feature-pair:hover .feature-image img {
-          transform: none;
+        .nav-content {
+          justify-content: center;
         }
+        .nav-cta {
+          display: none;
+        } /* Hide 'Download' in nav on mobile, they use hero button */
       }
     </style>
   </head>
   <body>
+    <div class="ambient-light">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+    </div>
+
+    <nav class="navbar">
+      <div class="nav-content">
+        <a href="#" class="nav-logo">
+          <img src="assets/favicon.png" alt="Logo" />
+          RunItUp
+        </a>
+        <a
+          href="https://apps.apple.com/us/app/runitup/id6754661019"
+          target="_blank"
+          class="nav-cta">
+          Download App
+        </a>
+      </div>
+    </nav>
+
     <div class="container">
-      <header class="hero">
-        <img src="assets/favicon.png" alt="RunItUp Logo" class="logo-img" />
+      <header class="hero reveal active">
+        <img src="assets/favicon.png" alt="RunItUp Logo" class="logo-main" />
         <h1>RunItUp</h1>
         <p>
           Your social GPS run tracker—built for community, competition, and
@@ -374,25 +479,39 @@
             class="custom-button">
             <img
               src="assets/AppStoreIcon.png"
-              alt="App Store Icon"
+              alt="App Store"
               class="store-icon" />
             Download on the App Store
           </a>
-
           <a href="#" class="custom-button secondary coming-soon">
             <img
               src="assets/GooglePlay.png"
-              alt="Google Play Icon"
+              alt="Google Play"
               class="store-icon" />
             Coming Soon to Google Play
           </a>
         </div>
       </header>
 
-      <section class="showcase-block">
-        <h2 class="section-title">Designed for Runners, by Runners</h2>
+      <section class="stats-bar reveal">
+        <div class="stat-item">
+          <span class="stat-number">Native GPS Tracking</span>
+          <span class="stat-label">Precision Run Data</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">Social Focus</span>
+          <span class="stat-label">Compete and Motivate</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">100% Free</span>
+          <span class="stat-label">No Subscriptions</span>
+        </div>
+      </section>
 
-        <div class="feature-pair">
+      <section class="showcase-block">
+        <h2 class="section-title reveal">Designed for Runners, by Runners</h2>
+
+        <div class="feature-pair reveal">
           <div class="feature-text">
             <h3>Precision GPS Tracking</h3>
             <p>
@@ -404,12 +523,12 @@
           <div class="feature-image">
             <img
               src="assets/gps_tracking_screenshot.png"
-              alt="App Screenshot: Live Tracking"
+              alt="Live Tracking"
               onerror="this.onerror=null;this.src='https://placehold.co/350x650/1a233c/ffc857?text=GPS+Tracking';" />
           </div>
         </div>
 
-        <div class="feature-pair reverse">
+        <div class="feature-pair reverse reveal">
           <div class="feature-text">
             <h3>Social Feed & Community</h3>
             <p>
@@ -421,12 +540,12 @@
           <div class="feature-image">
             <img
               src="assets/social_feed_screenshot.png"
-              alt="App Screenshot: Social Feed"
+              alt="Social Feed"
               onerror="this.onerror=null;this.src='https://placehold.co/350x650/1a233c/ffc857?text=Social+Feed';" />
           </div>
         </div>
 
-        <div class="feature-pair">
+        <div class="feature-pair reveal">
           <div class="feature-text">
             <h3>Clubs & Leaderboards</h3>
             <p>
@@ -438,30 +557,30 @@
           <div class="feature-image">
             <img
               src="assets/run_club_screenshot.png"
-              alt="App Screenshot: Leaderboards"
+              alt="Leaderboards"
               onerror="this.onerror=null;this.src='https://placehold.co/350x650/1a233c/ffc857?text=Leaderboards';" />
           </div>
         </div>
 
-        <div class="feature-pair reverse">
+        <div class="feature-pair reverse reveal">
           <div class="feature-text">
             <h3>Shoe Tracking & PRs</h3>
             <p>
               Never run on worn-out soles. Track mileage on your gear and get
               alerts when it's time to switch. Plus, view your calculated
-              Personal Records for 5k, 10k, and more.
+              Personal Records.
             </p>
           </div>
           <div class="feature-image">
             <img
               src="assets/profile_screenshot.png"
-              alt="App Screenshot: Profile Stats"
+              alt="Profile Stats"
               onerror="this.onerror=null;this.src='https://placehold.co/350x650/1a233c/ffc857?text=Profile+Stats';" />
           </div>
         </div>
       </section>
 
-      <section class="hero" style="padding-top: 0">
+      <section class="hero reveal" style="padding-top: 0">
         <h2
           style="
             font-size: 32px;
@@ -494,9 +613,29 @@
           >Terms of Use</a
         >
       </div>
-      <p style="margin-top: 20px; opacity: 0.5">
-        &copy; 2025 RunItUp. All rights reserved.
-      </p>
+      <p style="opacity: 0.5">&copy; 2025 RunItUp. All rights reserved.</p>
     </footer>
+
+    <script>
+      // This script detects when elements scroll into view and triggers the animation
+      const observerOptions = {
+        root: null,
+        rootMargin: "0px",
+        threshold: 0.1, // Trigger when 10% of the element is visible
+      };
+
+      const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("active");
+            observer.unobserve(entry.target); // Only animate once
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll(".reveal").forEach(el => {
+        observer.observe(el);
+      });
+    </script>
   </body>
 </html>
