@@ -1,110 +1,166 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RunItUp - Social GPS Run Tracker</title>
+    <meta
+      name="description"
+      content="RunItUp is your social GPS run tracker—built for community, competition, and pushing your limits. Track runs, join clubs, compete on leaderboards." />
     <link rel="icon" href="assets/favicon.png" type="image/png" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
       rel="stylesheet" />
 
     <style>
       /* --- VARIABLES --- */
       :root {
-        --bg-start: #1a233c;
-        --bg-end: #2c3e50;
+        --bg-dark: #0f1419;
+        --bg-card: #1a1f2e;
+        --bg-elevated: #242b3d;
         --primary: #ffc857;
+        --primary-dim: rgba(255, 200, 87, 0.15);
+        --primary-glow: rgba(255, 200, 87, 0.4);
         --accent: #f39c12;
+        --accent-secondary: #ff6b35;
         --text-primary: #ffffff;
-        --text-secondary: #cbd5e1;
-        --glass-border: rgba(255, 255, 255, 0.08);
-        --glass-bg: rgba(255, 255, 255, 0.03);
-        --nav-height: 70px;
+        --text-secondary: #94a3b8;
+        --text-muted: #64748b;
+        --border-subtle: rgba(255, 255, 255, 0.06);
+        --border-light: rgba(255, 255, 255, 0.1);
+        --gradient-gold: linear-gradient(135deg, #ffc857 0%, #f39c12 100%);
+        --gradient-hero: linear-gradient(
+          180deg,
+          #0f1419 0%,
+          #1a1f2e 50%,
+          #0f1419 100%
+        );
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+        --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.4);
+        --shadow-lg: 0 16px 64px rgba(0, 0, 0, 0.5);
+        --shadow-glow: 0 0 60px rgba(255, 200, 87, 0.15);
+        --nav-height: 72px;
+        --section-spacing: 140px;
+        --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
       }
 
-      /* --- RESET --- */
-      * {
+      /* --- RESET & BASE --- */
+      *,
+      *::before,
+      *::after {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
       }
+
       html {
         scroll-behavior: smooth;
+        scroll-padding-top: var(--nav-height);
       }
 
       body {
-        font-family: "Inter", sans-serif;
-        background: linear-gradient(
-          160deg,
-          var(--bg-start) 0%,
-          var(--bg-end) 100%
-        );
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        background: var(--bg-dark);
         color: var(--text-primary);
         min-height: 100vh;
         overflow-x: hidden;
         line-height: 1.6;
         -webkit-font-smoothing: antialiased;
-        padding-top: var(--nav-height); /* Prevent content hiding behind nav */
+        -moz-osx-font-smoothing: grayscale;
       }
 
-      /* --- ANIMATED BACKGROUND ORBS --- */
-      .ambient-light {
+      /* --- NOISE TEXTURE OVERLAY --- */
+      body::before {
+        content: "";
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        opacity: 0.03;
+        pointer-events: none;
+        z-index: 1000;
+      }
+
+      /* --- AMBIENT BACKGROUND --- */
+      .ambient-bg {
+        position: fixed;
+        inset: 0;
         overflow: hidden;
         z-index: -1;
         pointer-events: none;
       }
 
-      .orb {
+      .glow-orb {
         position: absolute;
         border-radius: 50%;
-        filter: blur(80px);
-        opacity: 0.4;
-        animation: float 20s infinite ease-in-out;
+        filter: blur(100px);
+        will-change: transform;
       }
 
-      .orb-1 {
-        top: -10%;
+      .glow-orb-1 {
+        top: -20%;
         left: -10%;
-        width: 50vw;
-        height: 50vw;
-        background: radial-gradient(
-          circle,
-          rgba(255, 200, 87, 0.2) 0%,
-          rgba(0, 0, 0, 0) 70%
-        );
-      }
-
-      .orb-2 {
-        bottom: -20%;
-        right: -10%;
         width: 60vw;
         height: 60vw;
+        max-width: 800px;
+        max-height: 800px;
         background: radial-gradient(
           circle,
-          rgba(29, 78, 216, 0.15) 0%,
-          rgba(0, 0, 0, 0) 70%
-        ); /* Subtle blue contrast */
-        animation-delay: -5s;
+          rgba(255, 200, 87, 0.12) 0%,
+          transparent 70%
+        );
+        animation: float-slow 25s ease-in-out infinite;
       }
 
-      @keyframes float {
-        0% {
-          transform: translate(0, 0);
-        }
-        50% {
-          transform: translate(30px, 50px);
-        }
+      .glow-orb-2 {
+        bottom: -30%;
+        right: -15%;
+        width: 70vw;
+        height: 70vw;
+        max-width: 900px;
+        max-height: 900px;
+        background: radial-gradient(
+          circle,
+          rgba(59, 130, 246, 0.08) 0%,
+          transparent 70%
+        );
+        animation: float-slow 30s ease-in-out infinite reverse;
+      }
+
+      .glow-orb-3 {
+        top: 40%;
+        left: 50%;
+        width: 40vw;
+        height: 40vw;
+        max-width: 500px;
+        max-height: 500px;
+        background: radial-gradient(
+          circle,
+          rgba(255, 107, 53, 0.06) 0%,
+          transparent 70%
+        );
+        animation: float-slow 20s ease-in-out infinite;
+        animation-delay: -10s;
+      }
+
+      @keyframes float-slow {
+        0%,
         100% {
-          transform: translate(0, 0);
+          transform: translate(0, 0) scale(1);
+        }
+        33% {
+          transform: translate(30px, -30px) scale(1.05);
+        }
+        66% {
+          transform: translate(-20px, 20px) scale(0.95);
         }
       }
 
@@ -113,21 +169,34 @@
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
+        right: 0;
         height: var(--nav-height);
-        background: rgba(26, 35, 60, 0.7); /* Translucent dark */
-        backdrop-filter: blur(12px); /* Glass effect */
-        -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid var(--glass-border);
-        z-index: 1000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        z-index: 100;
+        transition: var(--transition-smooth);
+      }
+
+      .navbar::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(15, 20, 25, 0.8);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border-bottom: 1px solid var(--border-subtle);
+        opacity: 0;
+        transition: var(--transition-smooth);
+      }
+
+      .navbar.scrolled::before {
+        opacity: 1;
       }
 
       .nav-content {
+        position: relative;
         width: 100%;
-        max-width: 1100px;
+        max-width: 1200px;
+        height: 100%;
+        margin: 0 auto;
         padding: 0 24px;
         display: flex;
         justify-content: space-between;
@@ -135,49 +204,685 @@
       }
 
       .nav-logo {
-        font-weight: 900;
-        font-size: 20px;
-        color: var(--primary);
         display: flex;
         align-items: center;
-        gap: 10px;
-        text-decoration: none; /* No underline */
+        gap: 12px;
+        text-decoration: none;
+        font-weight: 800;
+        font-size: 20px;
+        color: var(--text-primary);
+        transition: var(--transition-fast);
+      }
+
+      .nav-logo:hover {
+        color: var(--primary);
       }
 
       .nav-logo img {
-        height: 32px;
-        width: 32px;
-        border-radius: 6px;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .nav-link {
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 8px 16px;
+        border-radius: 8px;
+        transition: var(--transition-fast);
+      }
+
+      .nav-link:hover {
+        color: var(--text-primary);
+        background: var(--border-subtle);
       }
 
       .nav-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
         padding: 10px 20px;
-        background: var(--primary);
-        color: var(--bg-start);
-        border-radius: 20px;
-        font-weight: 700;
+        background: var(--gradient-gold);
+        color: var(--bg-dark);
+        border-radius: 100px;
+        font-weight: 600;
         font-size: 14px;
-        transition: transform 0.2s;
-        text-decoration: none; /* Explicitly remove underline */
+        text-decoration: none;
+        transition: var(--transition-fast);
+        box-shadow:
+          var(--shadow-sm),
+          0 0 20px rgba(255, 200, 87, 0.2);
       }
 
       .nav-cta:hover {
         transform: translateY(-2px);
+        box-shadow:
+          var(--shadow-md),
+          0 0 30px rgba(255, 200, 87, 0.3);
       }
 
-      /* --- UTILITY --- */
+      .nav-cta svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      /* --- SECTIONS --- */
+      section {
+        position: relative;
+      }
+
       .container {
         width: 100%;
-        max-width: 1100px;
+        max-width: 1200px;
         margin: 0 auto;
         padding: 0 24px;
       }
 
-      /* --- SCROLL ANIMATION CLASS --- */
+      /* --- HERO SECTION --- */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: calc(var(--nav-height) + 60px) 0 80px;
+        background: var(--gradient-hero);
+        overflow: hidden;
+      }
+
+      .hero-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 80px;
+        align-items: center;
+      }
+
+      .hero-text {
+        max-width: 560px;
+      }
+
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 14px 6px 6px;
+        background: var(--primary-dim);
+        border: 1px solid rgba(255, 200, 87, 0.2);
+        border-radius: 100px;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--primary);
+        margin-bottom: 24px;
+      }
+
+      .hero-badge-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--primary);
+        border-radius: 50%;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.5;
+          transform: scale(0.8);
+        }
+      }
+
+      .hero h1 {
+        font-size: clamp(48px, 6vw, 72px);
+        font-weight: 900;
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+        margin-bottom: 24px;
+      }
+
+      .hero h1 .gradient-text {
+        background: var(--gradient-gold);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .hero-description {
+        font-size: 18px;
+        line-height: 1.7;
+        color: var(--text-secondary);
+        margin-bottom: 40px;
+        max-width: 480px;
+      }
+
+      .hero-cta-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 48px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 16px 28px;
+        border-radius: 14px;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: var(--transition-fast);
+        cursor: pointer;
+        border: none;
+      }
+
+      .btn-primary {
+        background: var(--gradient-gold);
+        color: var(--bg-dark);
+        box-shadow:
+          var(--shadow-md),
+          0 0 40px rgba(255, 200, 87, 0.2);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow:
+          var(--shadow-lg),
+          0 0 60px rgba(255, 200, 87, 0.3);
+      }
+
+      .btn-secondary {
+        background: var(--bg-elevated);
+        color: var(--text-primary);
+        border: 1px solid var(--border-light);
+      }
+
+      .btn-secondary:hover {
+        background: var(--bg-card);
+        border-color: var(--border-light);
+        transform: translateY(-2px);
+      }
+
+      .btn-secondary.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+
+      .btn-icon {
+        width: 22px;
+        height: 22px;
+        object-fit: contain;
+      }
+
+      .hero-stats {
+        display: flex;
+        gap: 40px;
+      }
+
+      .hero-stat {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .hero-stat-value {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--primary);
+      }
+
+      .hero-stat-label {
+        font-size: 13px;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .hero-visual {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .hero-phone-wrapper {
+        position: relative;
+        z-index: 2;
+      }
+
+      .hero-phone {
+        width: 100%;
+        max-width: 320px;
+        border-radius: 40px;
+        box-shadow: var(--shadow-lg), var(--shadow-glow);
+        border: 4px solid var(--bg-elevated);
+        transform: perspective(1000px) rotateY(-5deg) rotateX(2deg);
+        transition: var(--transition-smooth);
+      }
+
+      .hero-phone:hover {
+        transform: perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1.02);
+      }
+
+      .hero-glow {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 120%;
+        height: 120%;
+        background: radial-gradient(
+          circle,
+          var(--primary-glow) 0%,
+          transparent 60%
+        );
+        filter: blur(60px);
+        z-index: 1;
+        opacity: 0.6;
+      }
+
+      .hero-ring {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 140%;
+        height: 140%;
+        border: 1px solid var(--primary-dim);
+        border-radius: 50%;
+        z-index: 0;
+        animation: ring-pulse 4s ease-in-out infinite;
+      }
+
+      .hero-ring:nth-child(2) {
+        width: 180%;
+        height: 180%;
+        animation-delay: -1s;
+      }
+
+      .hero-ring:nth-child(3) {
+        width: 220%;
+        height: 220%;
+        animation-delay: -2s;
+      }
+
+      @keyframes ring-pulse {
+        0%,
+        100% {
+          opacity: 0.3;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        50% {
+          opacity: 0.1;
+          transform: translate(-50%, -50%) scale(1.05);
+        }
+      }
+
+      /* --- FEATURES BAR --- */
+      .features-bar {
+        position: relative;
+        padding: 80px 0;
+        background: var(--bg-card);
+        border-top: 1px solid var(--border-subtle);
+        border-bottom: 1px solid var(--border-subtle);
+      }
+
+      .features-bar-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 48px;
+      }
+
+      .feature-bar-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+      }
+
+      .feature-bar-icon {
+        flex-shrink: 0;
+        width: 56px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--primary-dim);
+        border-radius: 16px;
+        color: var(--primary);
+      }
+
+      .feature-bar-icon svg {
+        width: 28px;
+        height: 28px;
+      }
+
+      .feature-bar-content h3 {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+
+      .feature-bar-content p {
+        font-size: 14px;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+
+      /* --- SECTION HEADER --- */
+      .section-header {
+        text-align: center;
+        max-width: 680px;
+        margin: 0 auto 80px;
+      }
+
+      .section-label {
+        display: inline-block;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--primary);
+        margin-bottom: 16px;
+      }
+
+      .section-title {
+        font-size: clamp(36px, 5vw, 48px);
+        font-weight: 800;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        margin-bottom: 20px;
+      }
+
+      .section-subtitle {
+        font-size: 18px;
+        color: var(--text-secondary);
+        line-height: 1.7;
+      }
+
+      /* --- FEATURES SHOWCASE --- */
+      .features-showcase {
+        padding: var(--section-spacing) 0;
+        background: var(--bg-dark);
+      }
+
+      .feature-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 80px;
+        align-items: center;
+        margin-bottom: 120px;
+      }
+
+      .feature-row:last-child {
+        margin-bottom: 0;
+      }
+
+      .feature-row.reverse {
+        direction: rtl;
+      }
+
+      .feature-row.reverse > * {
+        direction: ltr;
+      }
+
+      .feature-content {
+        max-width: 480px;
+      }
+
+      .feature-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        background: var(--primary-dim);
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 20px;
+      }
+
+      .feature-content h3 {
+        font-size: 32px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin-bottom: 16px;
+        line-height: 1.2;
+      }
+
+      .feature-content p {
+        font-size: 17px;
+        color: var(--text-secondary);
+        line-height: 1.7;
+        margin-bottom: 28px;
+      }
+
+      .feature-highlights {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .feature-highlight {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 15px;
+        color: var(--text-secondary);
+      }
+
+      .feature-highlight-icon {
+        flex-shrink: 0;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(34, 197, 94, 0.15);
+        border-radius: 50%;
+        color: #22c55e;
+      }
+
+      .feature-highlight-icon svg {
+        width: 12px;
+        height: 12px;
+      }
+
+      .feature-visual {
+        position: relative;
+        display: flex;
+        justify-content: center;
+      }
+
+      .feature-phone-container {
+        position: relative;
+      }
+
+      .feature-phone {
+        width: 100%;
+        max-width: 280px;
+        border-radius: 36px;
+        box-shadow: var(--shadow-lg);
+        border: 3px solid var(--bg-elevated);
+        transition: var(--transition-smooth);
+      }
+
+      .feature-phone:hover {
+        transform: scale(1.03) translateY(-8px);
+        box-shadow: var(--shadow-lg), var(--shadow-glow);
+      }
+
+      .feature-glow {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        height: 80%;
+        background: radial-gradient(
+          circle,
+          var(--primary-glow) 0%,
+          transparent 70%
+        );
+        filter: blur(50px);
+        z-index: -1;
+        opacity: 0.5;
+      }
+
+      /* --- CTA SECTION --- */
+      .cta-section {
+        padding: var(--section-spacing) 0;
+        background: linear-gradient(
+          180deg,
+          var(--bg-dark) 0%,
+          var(--bg-card) 50%,
+          var(--bg-dark) 100%
+        );
+      }
+
+      .cta-card {
+        position: relative;
+        padding: 80px 60px;
+        background: linear-gradient(
+          135deg,
+          var(--bg-elevated) 0%,
+          var(--bg-card) 100%
+        );
+        border-radius: 32px;
+        border: 1px solid var(--border-light);
+        text-align: center;
+        overflow: hidden;
+      }
+
+      .cta-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--primary),
+          transparent
+        );
+      }
+
+      .cta-glow {
+        position: absolute;
+        top: -50%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+          circle,
+          var(--primary-dim) 0%,
+          transparent 60%
+        );
+        pointer-events: none;
+      }
+
+      .cta-content {
+        position: relative;
+        z-index: 1;
+      }
+
+      .cta-title {
+        font-size: clamp(32px, 4vw, 44px);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin-bottom: 16px;
+      }
+
+      .cta-subtitle {
+        font-size: 18px;
+        color: var(--text-secondary);
+        margin-bottom: 40px;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .cta-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 16px;
+      }
+
+      /* --- FOOTER --- */
+      .footer {
+        padding: 60px 0;
+        background: var(--bg-card);
+        border-top: 1px solid var(--border-subtle);
+      }
+
+      .footer-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+      }
+
+      .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+        font-size: 18px;
+        color: var(--text-primary);
+        text-decoration: none;
+      }
+
+      .footer-logo img {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+      }
+
+      .footer-links {
+        display: flex;
+        gap: 32px;
+      }
+
+      .footer-links a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-size: 14px;
+        transition: var(--transition-fast);
+      }
+
+      .footer-links a:hover {
+        color: var(--primary);
+      }
+
+      .footer-copyright {
+        font-size: 13px;
+        color: var(--text-muted);
+      }
+
+      /* --- SCROLL ANIMATIONS --- */
       .reveal {
         opacity: 0;
-        transform: translateY(40px);
-        transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        transform: translateY(30px);
+        transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
       }
 
       .reveal.active {
@@ -185,456 +890,720 @@
         transform: translateY(0);
       }
 
-      /* --- HERO SECTION --- */
-      .hero {
-        text-align: center;
-        padding: 80px 0 60px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+      .reveal-delay-1 {
+        transition-delay: 0.1s;
+      }
+      .reveal-delay-2 {
+        transition-delay: 0.2s;
+      }
+      .reveal-delay-3 {
+        transition-delay: 0.3s;
       }
 
-      .logo-main {
-        width: 140px;
-        height: 140px;
-        margin-bottom: 32px;
-        border-radius: 28px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        transition: transform 0.3s;
-      }
-
-      .logo-main:hover {
-        transform: scale(1.05) rotate(2deg);
-      }
-
-      .hero h1 {
-        font-size: 64px;
-        font-weight: 900;
-        margin-bottom: 16px;
-        line-height: 1.1;
-        letter-spacing: -0.03em;
-        background: linear-gradient(135deg, #ffffff 0%, var(--primary) 100%);
-
-        /* The Fix: Include both the vendor prefix and the standard property */
-        -webkit-background-clip: text;
-        background-clip: text;
-
-        -webkit-text-fill-color: transparent;
-        /* Note: text-fill-color is not yet standard, so we only use the -webkit version */
-      }
-
-      .hero p {
-        font-size: 20px;
-        color: var(--text-secondary);
-        margin-bottom: 48px;
-        max-width: 600px;
-      }
-
-      .cta-buttons {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 16px;
-        width: 100%;
-      }
-
-      .custom-button {
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        background-color: var(--primary);
-        color: var(--bg-start);
-        padding: 16px 32px;
-        border-radius: 50px;
-        font-size: 16px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        width: 100%;
-        max-width: 360px;
-        box-shadow: 0 4px 20px rgba(255, 200, 87, 0.2);
-        border: 2px solid transparent;
-        text-decoration: none; /* Explicitly remove underline */
-      }
-
-      .custom-button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(255, 200, 87, 0.4);
-        background-color: #ffd175;
-      }
-
-      .custom-button.secondary {
-        background-color: transparent;
-        color: var(--primary);
-        border: 2px solid rgba(255, 200, 87, 0.3);
-        box-shadow: none;
-      }
-
-      .custom-button.coming-soon {
-        opacity: 0.6;
-        cursor: default;
-        filter: grayscale(1);
-      }
-      .custom-button.coming-soon:hover {
-        transform: none;
-        box-shadow: none;
-      }
-
-      .store-icon {
-        width: 24px;
-        height: 24px;
-        margin-right: 12px;
-        object-fit: contain;
-      }
-
-      /* --- STATS BAR (Social Proof) --- */
-      .stats-bar {
-        display: flex;
-        justify-content: space-around;
-        flex-wrap: wrap;
-        gap: 30px;
-        margin: 60px 0;
-        padding: 30px;
-        background: rgba(255, 255, 255, 0.02);
-        border-radius: 20px;
-        border: 1px solid var(--glass-border);
-      }
-
-      .stat-item {
-        text-align: center;
-      }
-      .stat-number {
-        display: block;
-        font-size: 32px;
-        font-weight: 800;
-        color: var(--primary);
-      }
-      .stat-label {
-        font-size: 14px;
-        color: var(--text-secondary);
-        text-transform: uppercase;
-        letter-spacing: 1px;
-      }
-
-      /* --- FEATURES --- */
-      .showcase-block {
-        padding: 60px 0 100px;
-      }
-      .section-title {
-        font-size: 36px;
-        text-align: center;
-        margin-bottom: 80px;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-      }
-
-      .feature-pair {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 60px;
-        margin-bottom: 120px;
-      }
-      .feature-pair.reverse {
-        flex-direction: row-reverse;
-      }
-
-      .feature-text {
-        flex: 1;
-        max-width: 450px;
-      }
-      .feature-text h3 {
-        font-size: 30px;
-        color: var(--primary);
-        margin-bottom: 16px;
-        font-weight: 700;
-      }
-      .feature-text p {
-        font-size: 18px;
-        color: var(--text-secondary);
-        line-height: 1.6;
-      }
-
-      .feature-image {
-        flex: 1;
-        display: flex;
-        justify-content: center;
-        position: relative;
-      }
-
-      /* Glowing effect behind phone */
-      .feature-image::after {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 70%;
-        height: 70%;
-        background: var(--primary);
-        opacity: 0.1;
-        filter: blur(50px);
-        border-radius: 50%;
-        z-index: -1;
-      }
-
-      .feature-image img {
-        width: 100%;
-        max-width: 300px;
-        border-radius: 40px;
-        border: 6px solid #1a233c;
-        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1),
-          0 25px 50px -12px rgba(0, 0, 0, 0.6);
-        transition: transform 0.4s ease;
-      }
-
-      .feature-pair:hover .feature-image img {
-        transform: scale(1.02) rotate(-1deg);
-      }
-      .feature-pair.reverse:hover .feature-image img {
-        transform: scale(1.02) rotate(1deg);
-      }
-
-      /* --- FOOTER --- */
-      .footer {
-        padding: 60px 0;
-        text-align: center;
-        border-top: 1px solid var(--glass-border);
-        background: rgba(0, 0, 0, 0.2);
-      }
-      .footer-links {
-        display: flex;
-        justify-content: center;
-        gap: 30px;
-        margin-bottom: 20px;
-      }
-      .footer-links a {
-        color: var(--text-secondary);
-        font-size: 14px;
-        transition: color 0.2s;
-        text-decoration: none; /* No underline in footer links either */
-      }
-      .footer-links a:hover {
-        color: var(--primary);
-      }
-
-      /* --- MOBILE --- */
-      @media (max-width: 850px) {
-        .hero h1 {
-          font-size: 48px;
+      /* --- MOBILE RESPONSIVE --- */
+      @media (max-width: 1024px) {
+        :root {
+          --section-spacing: 100px;
         }
-        .feature-pair,
-        .feature-pair.reverse {
-          flex-direction: column;
+
+        .hero-content {
+          grid-template-columns: 1fr;
+          gap: 60px;
           text-align: center;
-          gap: 40px;
-          margin-bottom: 80px;
         }
-        .feature-image img {
-          max-width: 260px;
+
+        .hero-text {
+          max-width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
         }
-        .nav-content {
+
+        .hero-description {
+          max-width: 100%;
+        }
+
+        .hero-cta-group {
           justify-content: center;
         }
-        .nav-cta {
+
+        .hero-stats {
+          justify-content: center;
+        }
+
+        .hero-visual {
+          order: -1;
+        }
+
+        .hero-phone {
+          max-width: 280px;
+          transform: none;
+        }
+
+        .features-bar-grid {
+          grid-template-columns: 1fr;
+          gap: 40px;
+          max-width: 400px;
+          margin: 0 auto;
+        }
+
+        .feature-row,
+        .feature-row.reverse {
+          grid-template-columns: 1fr;
+          gap: 48px;
+          direction: ltr;
+          text-align: center;
+        }
+
+        .feature-content {
+          max-width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .feature-highlights {
+          align-items: center;
+        }
+
+        .feature-phone {
+          max-width: 260px;
+        }
+
+        .cta-card {
+          padding: 60px 32px;
+        }
+      }
+
+      @media (max-width: 640px) {
+        :root {
+          --nav-height: 64px;
+          --section-spacing: 80px;
+        }
+
+        .nav-link {
           display: none;
-        } /* Hide 'Download' in nav on mobile, they use hero button */
+        }
+
+        .nav-cta span {
+          display: none;
+        }
+
+        .nav-cta {
+          padding: 10px 14px;
+        }
+
+        .hero {
+          padding-top: calc(var(--nav-height) + 40px);
+        }
+
+        .hero h1 {
+          font-size: 40px;
+        }
+
+        .hero-description {
+          font-size: 16px;
+        }
+
+        .btn {
+          padding: 14px 24px;
+          font-size: 15px;
+          width: 100%;
+        }
+
+        .hero-cta-group {
+          flex-direction: column;
+          width: 100%;
+          max-width: 320px;
+        }
+
+        .hero-stats {
+          flex-direction: column;
+          gap: 24px;
+        }
+
+        .hero-stat {
+          align-items: center;
+        }
+
+        .section-title {
+          font-size: 32px;
+        }
+
+        .feature-content h3 {
+          font-size: 26px;
+        }
+
+        .cta-buttons {
+          flex-direction: column;
+          width: 100%;
+          max-width: 320px;
+          margin: 0 auto;
+        }
+
+        .footer-links {
+          flex-direction: column;
+          align-items: center;
+          gap: 16px;
+        }
       }
     </style>
   </head>
   <body>
-    <div class="ambient-light">
-      <div class="orb orb-1"></div>
-      <div class="orb orb-2"></div>
+    <!-- Ambient Background -->
+    <div class="ambient-bg">
+      <div class="glow-orb glow-orb-1"></div>
+      <div class="glow-orb glow-orb-2"></div>
+      <div class="glow-orb glow-orb-3"></div>
     </div>
 
-    <nav class="navbar">
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
       <div class="nav-content">
         <a href="#" class="nav-logo">
-          <img src="assets/favicon.png" alt="Logo" />
+          <img src="assets/favicon.png" alt="RunItUp" />
           RunItUp
         </a>
-        <a
-          href="https://apps.apple.com/us/app/runitup/id6754661019"
-          target="_blank"
-          class="nav-cta">
-          Download App
-        </a>
-      </div>
-    </nav>
-
-    <div class="container">
-      <header class="hero reveal active">
-        <img src="assets/favicon.png" alt="RunItUp Logo" class="logo-main" />
-        <h1>RunItUp</h1>
-        <p>
-          Your social GPS run tracker—built for community, competition, and
-          pushing your limits.
-        </p>
-
-        <div class="cta-buttons">
+        <div class="nav-actions">
+          <a href="#features" class="nav-link">Features</a>
           <a
             href="https://apps.apple.com/us/app/runitup/id6754661019"
             target="_blank"
-            class="custom-button">
-            <img
-              src="assets/AppStoreIcon.png"
-              alt="App Store"
-              class="store-icon" />
-            Download on the App Store
-          </a>
-          <a href="#" class="custom-button secondary coming-soon">
-            <img
-              src="assets/GooglePlay.png"
-              alt="Google Play"
-              class="store-icon" />
-            Coming Soon to Google Play
+            class="nav-cta">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
+            </svg>
+            <span>Download</span>
           </a>
         </div>
-      </header>
+      </div>
+    </nav>
 
-      <section class="stats-bar reveal">
-        <div class="stat-item">
-          <span class="stat-number">Native GPS Tracking</span>
-          <span class="stat-label">Precision Run Data</span>
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-text">
+            <div class="hero-badge">
+              <span class="hero-badge-dot"></span>
+              Available on iOS
+            </div>
+            <h1>
+              Run Smarter.<br /><span class="gradient-text">Together.</span>
+            </h1>
+            <p class="hero-description">
+              Your social GPS run tracker—built for community, competition, and
+              pushing your limits. Track every mile, compete with friends, and
+              join a community of runners.
+            </p>
+            <div class="hero-cta-group">
+              <a
+                href="https://apps.apple.com/us/app/runitup/id6754661019"
+                target="_blank"
+                class="btn btn-primary">
+                <img
+                  src="assets/AppStoreIcon.png"
+                  alt="App Store"
+                  class="btn-icon" />
+                Download on App Store
+              </a>
+              <a href="#" class="btn btn-secondary disabled">
+                <img
+                  src="assets/GooglePlay.png"
+                  alt="Google Play"
+                  class="btn-icon" />
+                Coming to Android
+              </a>
+            </div>
+            <div class="hero-stats">
+              <div class="hero-stat">
+                <span class="hero-stat-value">100%</span>
+                <span class="hero-stat-label">Free Forever</span>
+              </div>
+              <div class="hero-stat">
+                <span class="hero-stat-value">GPS</span>
+                <span class="hero-stat-label">Native Tracking</span>
+              </div>
+              <div class="hero-stat">
+                <span class="hero-stat-value">Social</span>
+                <span class="hero-stat-label">Built-In</span>
+              </div>
+            </div>
+          </div>
+          <div class="hero-visual">
+            <div class="hero-ring"></div>
+            <div class="hero-ring"></div>
+            <div class="hero-ring"></div>
+            <div class="hero-glow"></div>
+            <div class="hero-phone-wrapper">
+              <img
+                src="assets/gps_tracking_screenshot.png"
+                alt="RunItUp GPS Tracking"
+                class="hero-phone"
+                onerror="
+                  this.onerror = null;
+                  this.src =
+                    'https://placehold.co/320x650/1a233c/ffc857?text=GPS+Tracking';
+                " />
+            </div>
+          </div>
         </div>
-        <div class="stat-item">
-          <span class="stat-number">Social Focus</span>
-          <span class="stat-label">Compete and Motivate</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number">100% Free</span>
-          <span class="stat-label">No Subscriptions</span>
-        </div>
-      </section>
+      </div>
+    </section>
 
-      <section class="showcase-block">
-        <h2 class="section-title reveal">Designed for Runners, by Runners</h2>
+    <!-- Features Bar -->
+    <section class="features-bar">
+      <div class="container">
+        <div class="features-bar-grid">
+          <div class="feature-bar-item reveal">
+            <div class="feature-bar-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+                <path d="M2 12h20" />
+              </svg>
+            </div>
+            <div class="feature-bar-content">
+              <h3>Precision GPS</h3>
+              <p>
+                Real-time tracking with crisp map visualizations and accurate
+                metrics.
+              </p>
+            </div>
+          </div>
+          <div class="feature-bar-item reveal reveal-delay-1">
+            <div class="feature-bar-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+            </div>
+            <div class="feature-bar-content">
+              <h3>Social Community</h3>
+              <p>
+                Connect with runners, share achievements, and motivate each
+                other.
+              </p>
+            </div>
+          </div>
+          <div class="feature-bar-item reveal reveal-delay-2">
+            <div class="feature-bar-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                <path d="M4 22h16" />
+                <path
+                  d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+                <path
+                  d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+              </svg>
+            </div>
+            <div class="feature-bar-content">
+              <h3>Compete & Win</h3>
+              <p>
+                Join clubs, climb leaderboards, and earn bragging rights weekly.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-        <div class="feature-pair reveal">
-          <div class="feature-text">
+    <!-- Features Showcase -->
+    <section class="features-showcase" id="features">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-label">Features</span>
+          <h2 class="section-title">Designed for Runners,<br />by Runners</h2>
+          <p class="section-subtitle">
+            Every feature in RunItUp was built with one goal: to make your
+            running experience better, more social, and more rewarding.
+          </p>
+        </div>
+
+        <!-- Feature 1: GPS Tracking -->
+        <div class="feature-row reveal">
+          <div class="feature-content">
+            <span class="feature-number">01</span>
             <h3>Precision GPS Tracking</h3>
             <p>
               Experience accurate real-time tracking with crisp map
               visualizations. Monitor your route, live pace, and total distance
               seamlessly as you run.
             </p>
+            <div class="feature-highlights">
+              <div class="feature-highlight">
+                <span class="feature-highlight-icon"
+                  ><svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3">
+                    <polyline points="20 6 9 17 4 12" /></svg
+                ></span>
+                Real-time route mapping
+              </div>
+              <div class="feature-highlight">
+                <span class="feature-highlight-icon"
+                  ><svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3">
+                    <polyline points="20 6 9 17 4 12" /></svg
+                ></span>
+                Live pace & distance metrics
+              </div>
+              <div class="feature-highlight">
+                <span class="feature-highlight-icon"
+                  ><svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3">
+                    <polyline points="20 6 9 17 4 12" /></svg
+                ></span>
+                Battery-optimized tracking
+              </div>
+            </div>
           </div>
-          <div class="feature-image">
-            <img
-              src="assets/gps_tracking_screenshot.png"
-              alt="Live Tracking"
-              onerror="this.onerror=null;this.src='https://placehold.co/350x650/1a233c/ffc857?text=GPS+Tracking';" />
+          <div class="feature-visual">
+            <div class="feature-glow"></div>
+            <div class="feature-phone-container">
+              <img
+                src="assets/gps_tracking_screenshot.png"
+                alt="GPS Tracking Feature"
+                class="feature-phone"
+                onerror="
+                  this.onerror = null;
+                  this.src =
+                    'https://placehold.co/280x560/1a233c/ffc857?text=GPS+Tracking';
+                " />
+            </div>
           </div>
         </div>
 
-        <div class="feature-pair reverse reveal">
-          <div class="feature-text">
+        <!-- Feature 2: Social Feed -->
+        <div class="feature-row reverse reveal">
+          <div class="feature-content">
+            <span class="feature-number">02</span>
             <h3>Social Feed & Community</h3>
             <p>
-              Share your victories. Post runs directly to your feed complete
-              with maps, stats, and photos. Cheer on your friends with likes and
-              comments.
+              Share your victories with the community. Post runs directly to
+              your feed complete with maps, stats, and weather data. Cheer on
+              friends with likes and comments.
             </p>
+            <div class="feature-highlights">
+              <div class="feature-highlight">
+                <span class="feature-highlight-icon"
+                  ><svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3">
+                    <polyline points="20 6 9 17 4 12" /></svg
+                ></span>
+                Share runs with maps & stats
+              </div>
+              <div class="feature-highlight">
+                <span class="feature-highlight-icon"
+                  ><svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3">
+                    <polyline points="20 6 9 17 4 12" /></svg
+                ></span>
+                Like & comment on activities
+              </div>
+              <div class="feature-highlight">
+                <span class="feature-highlight-icon"
+                  ><svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3">
+                    <polyline points="20 6 9 17 4 12" /></svg
+                ></span>
+                Follow your favorite runners
+              </div>
+            </div>
           </div>
-          <div class="feature-image">
-            <img
-              src="assets/social_feed_screenshot.png"
-              alt="Social Feed"
-              onerror="this.onerror=null;this.src='https://placehold.co/350x650/1a233c/ffc857?text=Social+Feed';" />
+          <div class="feature-visual">
+            <div class="feature-glow"></div>
+            <div class="feature-phone-container">
+              <img
+                src="assets/social_feed_screenshot.png"
+                alt="Social Feed Feature"
+                class="feature-phone"
+                onerror="
+                  this.onerror = null;
+                  this.src =
+                    'https://placehold.co/280x560/1a233c/ffc857?text=Social+Feed';
+                " />
+            </div>
           </div>
         </div>
 
-        <div class="feature-pair reveal">
-          <div class="feature-text">
+        <!-- Feature 3: Clubs & Leaderboards -->
+        <div class="feature-row reveal">
+          <div class="feature-content">
+            <span class="feature-number">03</span>
             <h3>Clubs & Leaderboards</h3>
             <p>
               Find your tribe. Create or join run clubs with friends and
               colleagues. Battle for the top spot on weekly leaderboards and
               earn bragging rights.
             </p>
+            <div class="feature-highlights">
+              <div class="feature-highlight">
+                <span class="feature-highlight-icon"
+                  ><svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3">
+                    <polyline points="20 6 9 17 4 12" /></svg
+                ></span>
+                Create or join run clubs
+              </div>
+              <div class="feature-highlight">
+                <span class="feature-highlight-icon"
+                  ><svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3">
+                    <polyline points="20 6 9 17 4 12" /></svg
+                ></span>
+                Weekly leaderboard competitions
+              </div>
+              <div class="feature-highlight">
+                <span class="feature-highlight-icon"
+                  ><svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3">
+                    <polyline points="20 6 9 17 4 12" /></svg
+                ></span>
+                Private invite codes
+              </div>
+            </div>
           </div>
-          <div class="feature-image">
-            <img
-              src="assets/run_club_screenshot.png"
-              alt="Leaderboards"
-              onerror="this.onerror=null;this.src='https://placehold.co/350x650/1a233c/ffc857?text=Leaderboards';" />
+          <div class="feature-visual">
+            <div class="feature-glow"></div>
+            <div class="feature-phone-container">
+              <img
+                src="assets/run_club_screenshot.png"
+                alt="Clubs & Leaderboards Feature"
+                class="feature-phone"
+                onerror="
+                  this.onerror = null;
+                  this.src =
+                    'https://placehold.co/280x560/1a233c/ffc857?text=Leaderboards';
+                " />
+            </div>
           </div>
         </div>
 
-        <div class="feature-pair reverse reveal">
-          <div class="feature-text">
+        <!-- Feature 4: Profile & PRs -->
+        <div class="feature-row reverse reveal">
+          <div class="feature-content">
+            <span class="feature-number">04</span>
             <h3>Shoe Tracking & PRs</h3>
             <p>
               Never run on worn-out soles. Track mileage on your gear and get
               alerts when it's time to switch. Plus, view your calculated
-              Personal Records.
+              Personal Records automatically.
             </p>
+            <div class="feature-highlights">
+              <div class="feature-highlight">
+                <span class="feature-highlight-icon"
+                  ><svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3">
+                    <polyline points="20 6 9 17 4 12" /></svg
+                ></span>
+                Track shoe mileage & wear
+              </div>
+              <div class="feature-highlight">
+                <span class="feature-highlight-icon"
+                  ><svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3">
+                    <polyline points="20 6 9 17 4 12" /></svg
+                ></span>
+                Automatic PR detection
+              </div>
+              <div class="feature-highlight">
+                <span class="feature-highlight-icon"
+                  ><svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3">
+                    <polyline points="20 6 9 17 4 12" /></svg
+                ></span>
+                Detailed run history
+              </div>
+            </div>
           </div>
-          <div class="feature-image">
-            <img
-              src="assets/profile_screenshot.png"
-              alt="Profile Stats"
-              onerror="this.onerror=null;this.src='https://placehold.co/350x650/1a233c/ffc857?text=Profile+Stats';" />
+          <div class="feature-visual">
+            <div class="feature-glow"></div>
+            <div class="feature-phone-container">
+              <img
+                src="assets/profile_screenshot.png"
+                alt="Profile & Stats Feature"
+                class="feature-phone"
+                onerror="
+                  this.onerror = null;
+                  this.src =
+                    'https://placehold.co/280x560/1a233c/ffc857?text=Profile';
+                " />
+            </div>
           </div>
         </div>
-      </section>
-
-      <section class="hero reveal" style="padding-top: 0">
-        <h2
-          style="
-            font-size: 32px;
-            color: var(--text-primary);
-            margin-bottom: 30px;
-          ">
-          Go Further, Together.
-        </h2>
-        <div class="cta-buttons">
-          <a
-            href="https://apps.apple.com/us/app/runitup/id6754661019"
-            target="_blank"
-            class="custom-button">
-            Download Now
-          </a>
-        </div>
-      </section>
-    </div>
-
-    <footer class="footer">
-      <div class="footer-links">
-        <a
-          href="https://korymbuck.github.io/runitup-privacy-policy/privacy_policy.html"
-          target="_blank"
-          >Privacy Policy</a
-        >
-        <a
-          href="https://korymbuck.github.io/runitup-privacy-policy/terms_of_use.html"
-          target="_blank"
-          >Terms of Use</a
-        >
       </div>
-      <p style="opacity: 0.5">&copy; 2025 RunItUp. All rights reserved.</p>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <div class="container">
+        <div class="cta-card reveal">
+          <div class="cta-glow"></div>
+          <div class="cta-content">
+            <h2 class="cta-title">Go Further, Together.</h2>
+            <p class="cta-subtitle">
+              Join thousands of runners who are pushing their limits with
+              RunItUp. Download free today.
+            </p>
+            <div class="cta-buttons">
+              <a
+                href="https://apps.apple.com/us/app/runitup/id6754661019"
+                target="_blank"
+                class="btn btn-primary">
+                <img
+                  src="assets/AppStoreIcon.png"
+                  alt="App Store"
+                  class="btn-icon" />
+                Download on App Store
+              </a>
+              <a href="#" class="btn btn-secondary disabled">
+                <img
+                  src="assets/GooglePlay.png"
+                  alt="Google Play"
+                  class="btn-icon" />
+                Coming to Android
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <a href="#" class="footer-logo">
+            <img src="assets/favicon.png" alt="RunItUp" />
+            RunItUp
+          </a>
+          <div class="footer-links">
+            <a
+              href="https://korymbuck.github.io/runitup-privacy-policy/privacy_policy.html"
+              target="_blank"
+              >Privacy Policy</a
+            >
+            <a
+              href="https://korymbuck.github.io/runitup-privacy-policy/terms_of_use.html"
+              target="_blank"
+              >Terms of Use</a
+            >
+          </div>
+          <p class="footer-copyright">
+            &copy; 2025 RunItUp. All rights reserved.
+          </p>
+        </div>
+      </div>
     </footer>
 
     <script>
-      // This script detects when elements scroll into view and triggers the animation
+      // Navbar scroll effect
+      const navbar = document.getElementById("navbar");
+      let lastScroll = 0;
+
+      window.addEventListener("scroll", () => {
+        const currentScroll = window.pageYOffset;
+
+        if (currentScroll > 50) {
+          navbar.classList.add("scrolled");
+        } else {
+          navbar.classList.remove("scrolled");
+        }
+
+        lastScroll = currentScroll;
+      });
+
+      // Reveal on scroll animation
       const observerOptions = {
         root: null,
         rootMargin: "0px",
-        threshold: 0.1, // Trigger when 10% of the element is visible
+        threshold: 0.1,
       };
 
-      const observer = new IntersectionObserver((entries, observer) => {
+      const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             entry.target.classList.add("active");
-            observer.unobserve(entry.target); // Only animate once
+            observer.unobserve(entry.target);
           }
         });
       }, observerOptions);
 
       document.querySelectorAll(".reveal").forEach(el => {
         observer.observe(el);
+      });
+
+      // Smooth scroll for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+          const href = this.getAttribute("href");
+          if (href !== "#") {
+            e.preventDefault();
+            const target = document.querySelector(href);
+            if (target) {
+              target.scrollIntoView({ behavior: "smooth" });
+            }
+          }
+        });
       });
     </script>
   </body>
